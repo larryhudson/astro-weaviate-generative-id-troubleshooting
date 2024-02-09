@@ -1,0 +1,10 @@
+---
+import { Debug } from "astro:components";
+import { generativeQueryWithId, generativeQueryWithoutId } from "@src/weaviate";
+
+const responseWithId = await generativeQueryWithId();
+const responseWithoutId = await generativeQueryWithoutId();
+---
+
+<Debug {responseWithId} />
+<Debug {responseWithoutId} />
