@@ -49,15 +49,29 @@ async function initialiseWeaviate() {
 await weaviateClient.embedded.start();
 await initialiseWeaviate();
 
-export async function generativeQueryWithId() {
+export async function generativeQueryWithPromptInFields() {
+  const generatePrompt = "Summarise the text: {content}";
   const response = await weaviateClient.graphql.get()
     .withClassName("Note")
-    .withFields("content _additional { id generate { singleResult } }")
+    .withFields(`content _additional { id generate ( singleResult: { prompt:\"${generatePrompt}\"}){error singleResult } }`)
     .withNearText({
       concepts: ["love"],
     })
+    .do();
+
+  return response;
+}
+
+export async function generativeQueryWithId() {
+  const generatePrompt = "Summarise the text: {content}";
+  const response = await weaviateClient.graphql.get()
+    .withClassName("Note")
     .withGenerate({
-      singlePrompt: "Summarise the text: {content}"
+      singlePrompt: generatePrompt
+    })
+    .withFields(`content _additional { id }`)
+    .withNearText({
+      concepts: ["love"],
     })
     .do();
 
